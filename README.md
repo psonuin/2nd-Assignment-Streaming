@@ -70,6 +70,28 @@ aws emr add-steps --cluster-id j-XXXXXXXXXXXX \
 ```
 
 #### MONITORING AND ALARMS:
+10. To setup cloudwatch monitoring on EMR performance, create an alarm for CPU Utilization. Firstly, create SNS topic using command.
+```
+aws sns create-topic --name SNSTOPICNAME
+```
+11. Add subscription with a email id to get notifications when alarm is triggered.
+```
+aws sns subscribe --topic-arn arn:aws:sns:your-region:your-account-id:YourSNSTopicName --protocol email --notification-endpoint my-email@gmail.com
+```
+12. Create a cloudwatch alarm that triggers the alarm if the utilization exceeds 80% for two consecutive 5-minute periods.
+```
+aws cloudwatch put-metric-alarm \
+    --alarm-name "EMR-CPU-Utilization-Alarm" \
+    --metric-name "CPUUtilization" \
+    --namespace "AWS/ElasticMapReduce" \
+    --statistic "Average" \
+    --period 300 \
+    --threshold 80.0 \
+    --comparison-operator "GreaterThanThreshold" \
+    --evaluation-periods 2 \
+    --alarm-actions "arn:aws:sns:region:account-id:topic-name" \
+    --dimensions Name=JobFlowId,Value=cluster-id
+```
 
 
 
