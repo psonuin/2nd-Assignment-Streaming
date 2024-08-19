@@ -16,8 +16,8 @@ spark = SparkSession.builder \
     .getOrCreate()
 logging.info("Spark Session Created")
 # Define S3 paths
-input_s3_path = "s3://data-stream-practice/iot-sensor-data/"  # Path to your 100 JSON files
-output_s3_path = "s3://data-stream-practice/iot-sensor-data-predictions/"  # Path for saving predictions
+input_s3_path = "s3://my-bucket-name/iot-sensor-data/"  # Path to your 100 JSON files
+output_s3_path = "s3://my-bucket-name/iot-sensor-data-predictions/"  # Path for saving predictions
 
 # Read all JSON files from the S3 directory into a DataFrame
 df = spark.read.json(input_s3_path)
