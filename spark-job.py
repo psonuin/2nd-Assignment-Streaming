@@ -16,25 +16,18 @@ spark = SparkSession.builder \
     .getOrCreate()
 logging.info("Spark Session Created")
 # Define S3 paths
-input_s3_path = "s3://my-bucket-name/iot-sensor-data/"  # Path to your 100 JSON files
-output_s3_path = "s3://my-bucket-name/iot-sensor-data-predictions/"  # Path for saving predictions
+input_s3_path = "s3://data-stream-practice/iot-sensor-data/"  # Path to your 100 JSON files
+output_s3_path = "s3://data-stream-practice/iot-sensor-data-predictions/"  # Path for saving predictions
 
 # Read all JSON files from the S3 directory into a DataFrame
 df = spark.read.json(input_s3_path)
 logging.info("df reading Completed")
+
 # Display the schema to understand the structure of the DataFrame
 df.printSchema()
 
-# Add row numbers to each record to facilitate splitting
-window_spec = Window.orderBy('Timestamp')  # Order by Timestamp or another column
-df_with_index = df.withColumn("row_index", row_number().over(window_spec))
-
-# Define split point
-split_point = int(df_with_index.count() * 0.8)
-
-# Split data into training and test sets
-training_data = df_with_index.filter(df_with_index.row_index <= split_point).drop("row_index")
-test_data = df_with_index.filter(df_with_index.row_index > split_point).drop("row_index")
+# Split data into training and test sets (randomly)
+training_data, test_data = df.randomSplit([0.8, 0.2], seed=42)  # Adjust seed for reproducibility
 
 # Convert features to a vector
 feature_columns = ['Temperature', 'Vibration', 'Pressure']
