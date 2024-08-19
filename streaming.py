@@ -17,7 +17,7 @@ np.random.seed(42)
 s3 = boto3.client('s3')
 
 # Your S3 bucket name and folder
-bucket_name = 'data-stream-practice'
+bucket_name = 'my-bucket-name'
 folder_name = 'iot-sensor-data/'
 
 def generate_sensor_data(force_failure=False, base_time=None):
